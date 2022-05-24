@@ -355,7 +355,7 @@ start_selenium <- function(attempted = 0, condition = "Success starting Selenium
     .GlobalEnv$new.java <- subset(df.java.after, !(df.java.after$pid %in% df.java.before$pid))
     
     # Close Window
-    remDr$closeWindow()
+    #remDr$closeWindow()
     
   }
   , error = function(error_condition) {
