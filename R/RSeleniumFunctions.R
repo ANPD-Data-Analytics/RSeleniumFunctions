@@ -356,8 +356,11 @@ start_selenium <- function(attempted = 0, condition = "Success starting Selenium
     
     # Remove
     .GlobalEnv$df <- NULL
+    .GlobalEnv$before.tasklist <- NULL
     .GlobalEnv$after.tasklist <- NULL
     .GlobalEnv$df.java.before <- NULL
+    .GlobalEnv$df.java.after <- NULL
+    .GlobalEnv$eCaps <- NULL
     
     # Close Startup Window
     remDr$closeWindow()
