@@ -354,8 +354,11 @@ start_selenium <- function(attempted = 0, condition = "Success starting Selenium
     # Find the new Java Tast
     .GlobalEnv$new.java <- subset(df.java.after, !(df.java.after$pid %in% df.java.before$pid))
     
-    # Close Window
-    #remDr$closeWindow()
+    # Remove
+    rm(c(.GlobalEnv$before.tasklist,.GlobalEnv$df, .GlobalEnv$after.tasklist,.GlobalEnv$df.java.before,.GlobalEnv$df$after.tasklist))
+    
+    # Close Startup Window
+    remDr$closeWindow()
     
   }
   , error = function(error_condition) {
