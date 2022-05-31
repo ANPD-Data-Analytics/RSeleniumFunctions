@@ -377,6 +377,7 @@ start_selenium <- function(attempted = 0, condition = "Success starting Selenium
 # Kill New Java Task Function - Determined in start_selenium()
 KillCurrentJava <- function(x) {
   for (j in 1:nrow(new.java)){
+    remDr$closeWindow()
     pid.to.kill <- as.integer(new.java$pid[j])  
     message(c("Killing Pid - ", pid.to.kill))
     taskkill.cmd <- paste( "taskkill" , "/F /PID" , pid.to.kill)
