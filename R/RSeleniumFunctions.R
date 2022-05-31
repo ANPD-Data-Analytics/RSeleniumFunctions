@@ -355,7 +355,9 @@ start_selenium <- function(attempted = 0, condition = "Success starting Selenium
     .GlobalEnv$new.java <- subset(df.java.after, !(df.java.after$pid %in% df.java.before$pid))
     
     # Remove
-    rm(c(.GlobalEnv$before.tasklist,.GlobalEnv$df, .GlobalEnv$after.tasklist,.GlobalEnv$df.java.before,.GlobalEnv$df$after.tasklist))
+    .GlobalEnv$df <- NULL
+    .GlobalEnv$after.tasklist <- NULL
+    .GlobalEnv$df.java.before <- NULL
     
     # Close Startup Window
     remDr$closeWindow()
