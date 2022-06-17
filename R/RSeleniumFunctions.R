@@ -63,6 +63,15 @@ start_selenium <- function(attempted = 0, condition = "Success starting Selenium
     install.packages("wdman")
     library(wdman)
   }
+    if(!require(retry)){
+    install.packages("retry")
+    library(retry)
+  }
+  
+      if(!require(XML)){
+    install.packages("XML")
+    library(XML)
+  }
   
   if(attempted >= 2){
     return("Failure starting Selenium!")
@@ -138,7 +147,6 @@ KillCurrentJava <- function(x) {
   try(remDr$close(),silent = TRUE)
   try(remDr$quit(),silent = TRUE)
   try(driver$server$stop(),silent = TRUE)
-  try(rm(driver),silent = TRUE)
   try(gc(),silent = TRUE)
 
   for (j in 1:nrow(new.java)){
@@ -151,10 +159,6 @@ KillCurrentJava <- function(x) {
 
 # Retry Element until No Error, Then Click ####
 RetryElement <- function(using,value){
-  if(!require(retry)){
-    install.packages("retry")
-    library(retry)
-  }
   .GlobalEnv$click <- retry(driver$client$findElement(using = using , value = value), 
                             until = ~remDr$status[1]=='0',
                             timeout = 6000, 
@@ -164,10 +168,6 @@ RetryElement <- function(using,value){
 
 # Retry Element until No Error ####
 RetryElementxClick <- function(using,value){
-  if(!require(retry)){
-    install.packages("retry")
-    library(retry)
-  }
   .GlobalEnv$click <- retry(driver$client$findElement(using = using , value = value), 
                             until = ~remDr$status[1]=='0',
                             timeout = 6000, 
