@@ -99,13 +99,13 @@ start_selenium <- function(attempted = 0, condition = "Success starting Selenium
                                                            #,'--disable-dev-shm-usage'
                                                            ,'--disable-browser-side-navigation'
                                                            ,'--dns-prefetch-disable'
-                                                           ,"profile.default_content_settings.popups" = 0L
-                                                           ,"profile.default_content_setting_values.automatic_downloads" = 1L
-                                                           ,"download.prompt_for_download" = FALSE
-                                                           ,"download.directory_upgrade" = TRUE
-                                                           ,"safebrowsing.enabled" = TRUE
-                                                           ,"safebrowsing.disable_download_protection" = TRUE
-                                                           ,"download.default_directory" = paste0("C:/selenium",'/',gsub("-|:| ", "",Sys.Date())))))
+                                                           ,'profile.default_content_settings.popups' = 0L
+                                                           ,'profile.default_content_setting_values.automatic_downloads' = 1L
+                                                           ,'download.prompt_for_download' = FALSE
+                                                           ,'download.directory_upgrade' = TRUE
+                                                           ,'safebrowsing.enabled' = TRUE
+                                                           ,'safebrowsing.disable_download_protection' = TRUE
+                                                           ,'download.default_directory' = paste0("C:/selenium",'/',gsub("-|:| ", "",Sys.Date())))))
     .GlobalEnv$driver <- rsDriver(browser=c("chrome"), chromever= getChromeVersion(), port= free_port(), extraCapabilities=eCaps)
     Sys.sleep(2)
     .GlobalEnv$remDr <- driver[['client']]
