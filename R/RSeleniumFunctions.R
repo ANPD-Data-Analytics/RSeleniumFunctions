@@ -96,15 +96,10 @@ start_selenium <- function(attempted = 0, condition = "Success starting Selenium
                                                            , '--disable-blink-features=AutomationControlled'
                                                            ,'enable-automation'
                                                            ,'--headless'
-                                                           #,'--disable-dev-shm-usage'
                                                            ,'--disable-browser-side-navigation'
                                                            ,'--dns-prefetch-disable'
-                                                           ,"--profile.default_content_settings.popups" = 0L
-                                                           ,"--profile.default_content_setting_values.automatic_downloads" = 1L
-                                                           ,"--download.prompt_for_download" = FALSE
-                                                           ,"--download.directory_upgrade" = TRUE
-                                                           ,"--safebrowsing.enabled" = TRUE
-                                                           ,"--safebrowsing.disable_download_protection" = TRUE
+                                                           ,'--disable-popup-blocking'
+                                                           ,'--disable-extensions'
                                                             )))
     .GlobalEnv$driver <- rsDriver(browser=c("chrome"), chromever= getChromeVersion(), port= free_port(), extraCapabilities=eCaps)
     Sys.sleep(2)
