@@ -105,7 +105,7 @@ start_selenium <- function(attempted = 0, condition = "Success starting Selenium
                                                            ,"--download.directory_upgrade" = TRUE
                                                            ,"--safebrowsing.enabled" = TRUE
                                                            ,"--safebrowsing.disable_download_protection" = TRUE
-                                                            ))))
+                                                            )))
     .GlobalEnv$driver <- rsDriver(browser=c("chrome"), chromever= getChromeVersion(), port= free_port(), extraCapabilities=eCaps)
     Sys.sleep(2)
     .GlobalEnv$remDr <- driver[['client']]
