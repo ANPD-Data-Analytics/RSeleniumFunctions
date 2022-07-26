@@ -1,9 +1,9 @@
 
-# Message to Log function #### 
-Message2Log <- function(M) { 
+# Message to Log function ####
+Message2Log <- function(M) {
   # Log
   log_string <- paste(now(), (M))
-  cat(log_string, file = log_file, sep="\n") 
+  cat(log_string, file = log_file, sep="\n")
   # Message in Console
   message(M)
 }
@@ -19,9 +19,9 @@ getChromeVersion <- function() {
             stderr = TRUE) %>%
     stringr::str_extract(pattern = "(?<=Version=)(\\d+\\.){3}") %>%
     magrittr::extract(!is.na(.))
-  
+
   versions = binman::list_versions("chromedriver")
-  
+
   chrome_version %>%
     magrittr::extract(!is.na(.)) %>%
     stringr::str_replace_all(pattern = "\\.",
@@ -39,7 +39,7 @@ start_selenium <- function(attempted = 0, condition = "Success starting Selenium
     install.packages("netstat")
     library(netstat)
   }
-  
+
   if(!require(RSelenium)){
     install.packages("RSelenium")
     library(RSelenium)
@@ -48,17 +48,17 @@ start_selenium <- function(attempted = 0, condition = "Success starting Selenium
     install.packages("dplyr")
     library(dplyr)
   }
-  
+
   if(!require(stringr)){
     install.packages("stringr")
     library(stringr)
   }
-  
+
   if(!require(binman)){
     install.packages("binman")
     library(binman)
   }
-  
+
   if(!require(wdman)){
     install.packages("wdman")
     library(wdman)
@@ -67,16 +67,16 @@ start_selenium <- function(attempted = 0, condition = "Success starting Selenium
     install.packages("retry")
     library(retry)
   }
-  
+
       if(!require(XML)){
     install.packages("XML")
     library(XML)
   }
-  
+
   if(attempted >= 2){
     return("Failure starting Selenium!")
   }
-  
+
   tryCatch({
     # Create Java Task List Before Starting Selenium
     .GlobalEnv$before.tasklist <-  system2("tasklist", stdout = TRUE )
@@ -86,7 +86,7 @@ start_selenium <- function(attempted = 0, condition = "Success starting Selenium
     .GlobalEnv$df$pid <- as.integer(substr(before.tasklist, 30, 34))
     .GlobalEnv$df$before.tasklist <- NULL
     .GlobalEnv$df.java.before <- df[df$taskname == 'java.exe', ]
-    
+
     # Define args and Connect to Chrome
     .GlobalEnv$chrome.version<-getChromeVersion()
     .GlobalEnv$eCaps <- list(chromeOptions = list(args = c('--disable-gpu'
@@ -95,7 +95,7 @@ start_selenium <- function(attempted = 0, condition = "Success starting Selenium
                                                            ,'--disable-blink-features'
                                                            , '--disable-blink-features=AutomationControlled'
                                                            ,'enable-automation'
-                                                           ,'--headless'                                     
+                                                           ,'--headless'
                                                            #,'--disable-dev-shm-usage'
                                                            ,'--disable-browser-side-navigation'
                                                            ,'--dns-prefetch-disable'
@@ -105,14 +105,14 @@ start_selenium <- function(attempted = 0, condition = "Success starting Selenium
                                                            ,"download.directory_upgrade" = TRUE
                                                            ,"safebrowsing.enabled" = TRUE
                                                            ,"safebrowsing.disable_download_protection" = TRUE
-                                                           ,"download.default_directory" = paste0("C:/selenium",'/',gsub("-|:| ", "",Sys.Date())))
+                                                           ,"download.default_directory" = paste0("C:/selenium",'/',gsub("-|:| ", "",Sys.Date())))))
     .GlobalEnv$driver <- rsDriver(browser=c("chrome"), chromever= getChromeVersion(), port= free_port(), extraCapabilities=eCaps)
     Sys.sleep(2)
     .GlobalEnv$remDr <- driver[['client']]
-    
+
     # Message Port
     message(c("Using Port : ",driver$client$port))
-    
+
     # Create Java Task List After Starting Selenium
     .GlobalEnv$after.tasklist <-  system2("tasklist", stdout = TRUE )
     .GlobalEnv$after.tasklist <- after.tasklist[-(1:3)]
@@ -121,10 +121,10 @@ start_selenium <- function(attempted = 0, condition = "Success starting Selenium
     .GlobalEnv$df$pid <- as.integer(substr(after.tasklist, 30, 34))
     .GlobalEnv$df$after.tasklist <- NULL
     .GlobalEnv$df.java.after <- df[df$taskname == 'java.exe', ]
-    
+
     # Find the new Java Tast
     .GlobalEnv$new.java <- subset(df.java.after, !(df.java.after$pid %in% df.java.before$pid))
-    
+
     # Remove
     .GlobalEnv$df <- NULL
     .GlobalEnv$before.tasklist <- NULL
@@ -132,10 +132,10 @@ start_selenium <- function(attempted = 0, condition = "Success starting Selenium
     .GlobalEnv$df.java.before <- NULL
     .GlobalEnv$df.java.after <- NULL
     .GlobalEnv$eCaps <- NULL
-    
+
     # Close Startup Window
     remDr$closeWindow()
-    
+
   }
   , error = function(error_condition) {
     if(grepl("already in use",error_condition, fixed = TRUE)){
@@ -150,14 +150,14 @@ start_selenium <- function(attempted = 0, condition = "Success starting Selenium
 
 # Kill New Java Task Function - Determined in start_selenium()
 KillCurrentJava <- function(x) {
-  
+
   try(remDr$close(),silent = TRUE)
   try(remDr$quit(),silent = TRUE)
   try(driver$server$stop(),silent = TRUE)
   try(gc(),silent = TRUE)
 
   for (j in 1:nrow(new.java)){
-    pid.to.kill <- as.integer(new.java$pid[j])  
+    pid.to.kill <- as.integer(new.java$pid[j])
     message(c("Killing Pid - ", pid.to.kill))
     taskkill.cmd <- paste( "taskkill" , "/F /PID" , pid.to.kill)
     system( taskkill.cmd )
@@ -166,17 +166,17 @@ KillCurrentJava <- function(x) {
 
 # Retry Element until No Error, Then Click ####
 RetryElement <- function(using,value){
-  .GlobalEnv$click <- retry(driver$client$findElement(using = using , value = value), 
+  .GlobalEnv$click <- retry(driver$client$findElement(using = using , value = value),
                             until = ~remDr$status[1]=='0',
-                            timeout = 6000, 
+                            timeout = 6000,
                             silent = TRUE)
   .GlobalEnv$click$clickElement()
 }
 
 # Retry Element until No Error ####
 RetryElementxClick <- function(using,value){
-  .GlobalEnv$click <- retry(driver$client$findElement(using = using , value = value), 
+  .GlobalEnv$click <- retry(driver$client$findElement(using = using , value = value),
                             until = ~remDr$status[1]=='0',
-                            timeout = 6000, 
+                            timeout = 6000,
                             silent = TRUE)
 }
