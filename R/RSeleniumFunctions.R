@@ -95,7 +95,7 @@ start_selenium <- function(attempted = 0, condition = "Success starting Selenium
                                                            ,'--disable-blink-features'
                                                            , '--disable-blink-features=AutomationControlled'
                                                            ,'enable-automation'
-                                                           ,'--headless'
+                                                           #,'--headless'
                                                            ,'--disable-browser-side-navigation'
                                                            ,'--dns-prefetch-disable'
                                                            ,'--disable-popup-blocking'
