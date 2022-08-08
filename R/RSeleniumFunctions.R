@@ -36,40 +36,40 @@ getChromeVersion <- function() {
 # Start Selenium Function ####
 start_selenium <- function(attempted = 0, condition = "Success starting Selenium web driver!", browserpreference = "chrome"){
   if(!require(netstat)){
-    install.packages("netstat")
+    install.packages("netstat",dependencies = TRUE)
     library(netstat)
   }
 
   if(!require(RSelenium)){
-    install.packages("RSelenium")
+    install.packages("RSelenium",dependencies = TRUE)
     library(RSelenium)
   }
   if(!require(dplyr)){
-    install.packages("dplyr")
+    install.packages("dplyr",dependencies = TRUE)
     library(dplyr)
   }
 
   if(!require(stringr)){
-    install.packages("stringr")
+    install.packages("stringr",dependencies = TRUE)
     library(stringr)
   }
 
   if(!require(binman)){
-    install.packages("binman")
+    install.packages("binman",dependencies = TRUE)
     library(binman)
   }
 
   if(!require(wdman)){
-    install.packages("wdman")
+    install.packages("wdman",dependencies = TRUE)
     library(wdman)
   }
     if(!require(retry)){
-    install.packages("retry")
+    install.packages("retry",dependencies = TRUE)
     library(retry)
   }
 
       if(!require(XML)){
-    install.packages("XML")
+    install.packages("XML",dependencies = TRUE)
     library(XML)
   }
 
