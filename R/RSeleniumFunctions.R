@@ -1,3 +1,4 @@
+# Author: Rachel Addlespurger(rachel.addlespurger@abbott.com) ####
 
 # Message to Log function ####
 Message2Log <- function(M) {
