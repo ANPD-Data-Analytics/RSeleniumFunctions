@@ -1,5 +1,5 @@
 # Author: Rachel Addlespurger(rachel.addlespurger@abbott.com) ####
-
+# Test Comment 2
 # Message to Log function ####
 Message2Log <- function(M) {
   # Log
