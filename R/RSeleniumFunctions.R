@@ -44,8 +44,10 @@ getChromeVersion2 <- function() {
     magrittr::extract(!is.na(.))
 
   versions = binman::list_versions("chromedriver")
+  .GlobalEnv$versionsdf <- as.data.frame(versions)
 
-  chrome_version %>%
+
+  .GlobalEnv$chrome.version <- chrome_version %>%
     magrittr::extract(!is.na(.)) %>%
     stringr::str_replace_all(pattern = "\\.",
                              replacement = "\\\\.") %>%
@@ -54,6 +56,11 @@ getChromeVersion2 <- function() {
     as.numeric_version() %>%
     min() %>%
     as.character()
+
+  try(.GlobalEnv$chrome_version_row <- which(versionsdf$win32 == chrome.version), silent = TRUE)
+  try(.GlobalEnv$chrome.version2 <- versionsdf [(chrome_version_row - 1),], silent = TRUE)
+  try(.GlobalEnv$chrome.version3 <- versionsdf [(chrome_version_row + 1),], silent = TRUE)
+
 }
 
 # Start Selenium Function ####
@@ -96,15 +103,42 @@ start_selenium <- function(attempted = 0, condition = "Success starting Selenium
                                                            #,'--disable-popup-blocking'
                                                            #,'--disable-extensions'
     )))
-    .GlobalEnv$chrome.version<-getChromeVersion2()
+
+    getChromeVersion2()
 
     options(warn=-1)
 
-    .GlobalEnv$driver <- rsDriver(browser=  c("chrome") #paste0(browserpreference)
+    try((statusdf <- as.data.frame(driver$client$getStatus())), silent = TRUE)  #statusdf$ready[1]
+    if((!exists("statusdf") == TRUE)){
+
+      .GlobalEnv$driver <- rsDriver(browser=  c("chrome") #paste0(browserpreference)
+                                    ,version = "latest"
+                                    ,chromever= chrome.version2
+                                    ,port= free_port()
+                                    ,extraCapabilities=eCaps
+                                    , verbose = FALSE)
+    }
+
+    try((statusdf <- as.data.frame(driver$client$getStatus())),silent = TRUE)
+    if((!exists("statusdf") == TRUE)){
+      try(.GlobalEnv$driver <- rsDriver(browser=  c("chrome") #paste0(browserpreference)
                                   ,version = "latest"
                                   ,chromever= chrome.version
                                   ,port= free_port()
-                                  ,extraCapabilities=eCaps)
+                                  ,extraCapabilities=eCaps
+                                  , verbose = FALSE),silent = TRUE)
+    }
+
+    try((statusdf <- as.data.frame(driver$client$getStatus())),silent = TRUE)
+    if((!exists("statusdf") == TRUE)){
+    .GlobalEnv$driver <- rsDriver(browser=  c("chrome") #paste0(browserpreference)
+                                  ,version = "latest"
+                                  ,chromever= chrome.version3
+                                  ,port= free_port()
+                                  ,extraCapabilities=eCaps
+                                  , verbose = FALSE)
+    }
+
     Sys.sleep(2)
 
     # try(sel <- wdman::selenium(), silent = TRUE)
