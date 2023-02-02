@@ -95,8 +95,8 @@ start_selenium <- function(attempted = 0, condition = "Success starting Selenium
                                                            ,'--dns-prefetch-disable'
                                                            #,'--disable-popup-blocking'
                                                            #,'--disable-extensions'
-                                                            )))
-    .GlobalEnv$chrome.version<-getChromeVersion()
+    )))
+    .GlobalEnv$chrome.version<-getChromeVersion2()
 
     options(warn=-1)
 
@@ -107,31 +107,31 @@ start_selenium <- function(attempted = 0, condition = "Success starting Selenium
                                   ,extraCapabilities=eCaps)
     Sys.sleep(2)
 
-    try(sel <- wdman::selenium(), silent = TRUE)
-    try(FindError <- sel$log(), silent = TRUE)
-    try(FindError <- as.data.frame(FindError$stderr), silent = TRUE)
+    # try(sel <- wdman::selenium(), silent = TRUE)
+    # try(FindError <- sel$log(), silent = TRUE)
+    # try(FindError <- as.data.frame(FindError$stderr), silent = TRUE)
+    #
+    # if(exists("FindError") == TRUE & grepl('Error',FindError[1])==TRUE){
+    #   message("issue found - checking older 'chrome.version'")
+    #   .GlobalEnv$chrome.version<-getChromeVersion()
+    #   .GlobalEnv$driver <- rsDriver(browser=  c("chrome") #paste0(browserpreference)
+    #                                 ,version = "latest"
+    #                                 ,chromever= chrome.version
+    #                                 ,port= free_port()
+    #                                 ,extraCapabilities=eCaps)
+    #   rm(FindError)
+    # }
 
-    if(exists("FindError") == TRUE & grepl('Error',FindError[1])==TRUE){
-      message("issue found - checking older 'chrome.version'")
-      .GlobalEnv$chrome.version<-getChromeVersion2()
-      .GlobalEnv$driver <- rsDriver(browser=  c("chrome") #paste0(browserpreference)
-                                    ,version = "latest"
-                                    ,chromever= chrome.version
-                                    ,port= free_port()
-                                    ,extraCapabilities=eCaps)
-      rm(FindError)
-    }
-
-    Sys.sleep(2)
-
-    try(sel <- wdman::selenium(), silent = TRUE)
-    try(FindError <- sel$log(), silent = TRUE)
-    try(FindError <- as.data.frame(FindError$stderr), silent = TRUE)
-
-    if(exists("FindError") == TRUE & grepl('Error',FindError[1])==TRUE & attempted > 2 ){
-        stop("Failure starting Selenium!")
-    } else { message("Successful connect to remDr")
-             options(warn=0)}
+    # Sys.sleep(2)
+    #
+    # try(sel <- wdman::selenium(), silent = TRUE)
+    # try(FindError <- sel$log(), silent = TRUE)
+    # try(FindError <- as.data.frame(FindError$stderr), silent = TRUE)
+    #
+    #     if(exists("FindError") == TRUE & grepl('Error',FindError[1])==TRUE & attempted > 2 ){
+    #         stop("Failure starting Selenium!")
+    #     } else { message("Successful connect to remDr")
+    #              options(warn=0)}
 
     .GlobalEnv$remDr <- driver[['client']]
 
@@ -168,8 +168,8 @@ start_selenium <- function(attempted = 0, condition = "Success starting Selenium
       attempted <- attempted + 1
       condition <<- start_selenium(attempted)
       options(warn=0)
-      }
-    })
+    }
+  })
   return(condition)
 }
 
