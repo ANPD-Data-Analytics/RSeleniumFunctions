@@ -35,6 +35,10 @@ getChromeVersion <- function() {
 # Start Selenium Function ####
 start_selenium <- function(browserpreference = "chrome"){
 
+  suppressMessages({
+
+  options(warn=-1)
+
   require(netstat)
   require(RSelenium)
   require(dplyr)
@@ -63,13 +67,12 @@ start_selenium <- function(browserpreference = "chrome"){
                                                            ,'--disable-blink-features=AutomationControlled'
                                                            ,'--disable-browser-side-navigation'
                                                            ,'--dns-prefetch-disable'
+                                                           ,'--disable-notifications'
                                                            #,'--disable-popup-blocking'
                                                            #,'--disable-extensions'
     )))
 
     getChromeVersion()
-
-    options(warn=-1)
 
     try((statusdf <- as.data.frame(driver$client$getStatus())), silent = TRUE)  #statusdf$ready[1]
     if((!exists("statusdf") == TRUE)){
@@ -154,7 +157,11 @@ start_selenium <- function(browserpreference = "chrome"){
     # Close Startup Window
     #remDr$closeWindow()
 
+    options(warn=0)
+
+  })
 }
+
 
 # Kill New Java Task Function - Determined in start_selenium()
 KillCurrentJava <- function(x) {
