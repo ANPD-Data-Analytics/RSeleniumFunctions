@@ -1,16 +1,5 @@
 # Author: Rachel Addlespurger(rachel.addlespurger@abbott.com) ####
 
-# Message to Log function ####
-Message2Log <- function(M) {
-  # Log
-  log_string <- paste(now(), (M))
-  cat(log_string, file = log_file, sep="\n")
-  # Message in Console
-  message(M)
-}
-#Ex.
-#log_file <- file("X:\\Data\\D107641_LA\\CDA_Shr_fldr\\Retail Analytics\\Automation Script Logs\\Vendor Central Log.txt", open="a")
-
 # Function receives Chrome Driver Information ####
 getChromeVersion <- function() {
   chrome_version <-
@@ -23,29 +12,7 @@ getChromeVersion <- function() {
 
   versions = binman::list_versions("chromedriver")
 
-  chrome_version %>%
-    magrittr::extract(!is.na(.)) %>%
-    stringr::str_replace_all(pattern = "\\.",
-                             replacement = "\\\\.") %>%
-    paste0("^",  .) %>%
-    stringr::str_subset(string = dplyr::last(versions)) %>%
-    as.numeric_version() %>%
-    max() %>%
-    as.character()
-}
-
-getChromeVersion2 <- function() {
-  chrome_version <-
-    system2(command = "wmic",
-            args = 'datafile where name="C:\\\\Program Files (x86)\\\\Google\\\\Chrome\\\\Application\\\\chrome.exe" get Version /value',
-            stdout = TRUE,
-            stderr = TRUE) %>%
-    stringr::str_extract(pattern = "(?<=Version=)(\\d+\\.){3}") %>%
-    magrittr::extract(!is.na(.))
-
-  versions = binman::list_versions("chromedriver")
   .GlobalEnv$versionsdf <- as.data.frame(versions)
-
 
   .GlobalEnv$chrome.version <- chrome_version %>%
     magrittr::extract(!is.na(.)) %>%
@@ -64,7 +31,7 @@ getChromeVersion2 <- function() {
 }
 
 # Start Selenium Function ####
-start_selenium <- function(attempted = 0, condition = "Success starting Selenium web driver!", browserpreference = "chrome"){
+start_selenium <- function(browserpreference = "chrome"){
 
   require(netstat)
   require(RSelenium)
@@ -75,12 +42,6 @@ start_selenium <- function(attempted = 0, condition = "Success starting Selenium
   require(retry)
   require(XML)
   require(rJava)
-
-  if(attempted >= 2){
-    return("Failure starting Selenium!")
-  }
-
-  tryCatch({
 
     # Create Java Task List Before Starting Selenium
     .GlobalEnv$before.tasklist <-  system2("tasklist", stdout = TRUE )
@@ -104,68 +65,52 @@ start_selenium <- function(attempted = 0, condition = "Success starting Selenium
                                                            #,'--disable-extensions'
     )))
 
-    getChromeVersion2()
+    getChromeVersion()
 
     options(warn=-1)
 
     try((statusdf <- as.data.frame(driver$client$getStatus())), silent = TRUE)  #statusdf$ready[1]
     if((!exists("statusdf") == TRUE)){
 
-      .GlobalEnv$driver <- rsDriver(browser=  c("chrome") #paste0(browserpreference)
-                                    ,version = "latest"
-                                    ,chromever= chrome.version2
-                                    ,port= free_port()
-                                    ,extraCapabilities=eCaps
-                                    , verbose = FALSE)
+      try(.GlobalEnv$driver <- rsDriver(browser=  c("chrome") #paste0(browserpreference)
+                                        ,version = "latest"
+                                        ,chromever= chrome.version2
+                                        # ,geckover = NULL
+                                        # ,iedriver = NULL
+                                        # ,phantomver = NULL
+                                        ,port= free_port()
+                                        ,check = TRUE
+                                        ,extraCapabilities=eCaps
+                                        , verbose = FALSE) , silent = TRUE)
     }
 
     try((statusdf <- as.data.frame(driver$client$getStatus())),silent = TRUE)
     if((!exists("statusdf") == TRUE)){
       try(.GlobalEnv$driver <- rsDriver(browser=  c("chrome") #paste0(browserpreference)
-                                  ,version = "latest"
-                                  ,chromever= chrome.version
-                                  ,port= free_port()
-                                  ,extraCapabilities=eCaps
-                                  , verbose = FALSE),silent = TRUE)
+                                        ,version = "latest"
+                                        ,chromever= chrome.version
+                                        # ,geckover = NULL
+                                        # ,iedriver = NULL
+                                        # ,phantomver = NULL
+                                        ,port= free_port()
+                                        ,extraCapabilities=eCaps
+                                        , verbose = FALSE),silent = TRUE)
     }
 
     try((statusdf <- as.data.frame(driver$client$getStatus())),silent = TRUE)
     if((!exists("statusdf") == TRUE)){
-    .GlobalEnv$driver <- rsDriver(browser=  c("chrome") #paste0(browserpreference)
-                                  ,version = "latest"
-                                  ,chromever= chrome.version3
-                                  ,port= free_port()
-                                  ,extraCapabilities=eCaps
-                                  , verbose = FALSE)
+      try(.GlobalEnv$driver <- rsDriver(browser=  c("chrome") #paste0(browserpreference)
+                                        ,version = "latest"
+                                        ,chromever= chrome.version3
+                                        # ,geckover = NULL
+                                        # ,iedriver = NULL
+                                        # ,phantomver = NULL
+                                        ,port= free_port()
+                                        ,extraCapabilities=eCaps
+                                        ,verbose = FALSE), silent = TRUE)
     }
 
     Sys.sleep(2)
-
-    # try(sel <- wdman::selenium(), silent = TRUE)
-    # try(FindError <- sel$log(), silent = TRUE)
-    # try(FindError <- as.data.frame(FindError$stderr), silent = TRUE)
-    #
-    # if(exists("FindError") == TRUE & grepl('Error',FindError[1])==TRUE){
-    #   message("issue found - checking older 'chrome.version'")
-    #   .GlobalEnv$chrome.version<-getChromeVersion()
-    #   .GlobalEnv$driver <- rsDriver(browser=  c("chrome") #paste0(browserpreference)
-    #                                 ,version = "latest"
-    #                                 ,chromever= chrome.version
-    #                                 ,port= free_port()
-    #                                 ,extraCapabilities=eCaps)
-    #   rm(FindError)
-    # }
-
-    # Sys.sleep(2)
-    #
-    # try(sel <- wdman::selenium(), silent = TRUE)
-    # try(FindError <- sel$log(), silent = TRUE)
-    # try(FindError <- as.data.frame(FindError$stderr), silent = TRUE)
-    #
-    #     if(exists("FindError") == TRUE & grepl('Error',FindError[1])==TRUE & attempted > 2 ){
-    #         stop("Failure starting Selenium!")
-    #     } else { message("Successful connect to remDr")
-    #              options(warn=0)}
 
     .GlobalEnv$remDr <- driver[['client']]
 
@@ -195,16 +140,6 @@ start_selenium <- function(attempted = 0, condition = "Success starting Selenium
     # Close Startup Window
     #remDr$closeWindow()
 
-  }, error = function(error_condition) {
-    if(grepl("already in use",error_condition, fixed = TRUE)){
-      tryCatch(driver$close(),error = function(error_condition){message(error_condition)})
-      rD[["server"]]$stop()
-      attempted <- attempted + 1
-      condition <<- start_selenium(attempted)
-      options(warn=0)
-    }
-  })
-  return(condition)
 }
 
 # Kill New Java Task Function - Determined in start_selenium()
