@@ -27,6 +27,7 @@ getChromeVersion <- function() {
   try(.GlobalEnv$chrome_version_row <- which(versionsdf$win32 == chrome.version), silent = TRUE)
   try(.GlobalEnv$chrome.version2 <- versionsdf [(chrome_version_row - 1),], silent = TRUE)
   try(.GlobalEnv$chrome.version3 <- versionsdf [(chrome_version_row - 2),], silent = TRUE)
+  try(.GlobalEnv$chrome.version4 <- versionsdf [(chrome_version_row - 3),], silent = TRUE)
   #try(.GlobalEnv$chrome.version3 <- versionsdf [(chrome_version_row + 1),], silent = TRUE)
 
 }
@@ -73,9 +74,21 @@ start_selenium <- function(browserpreference = "chrome"){
     try((statusdf <- as.data.frame(driver$client$getStatus())), silent = TRUE)  #statusdf$ready[1]
     if((!exists("statusdf") == TRUE)){
 
+      try((statusdf <- as.data.frame(driver$client$getStatus())),silent = TRUE)
+      if((!exists("statusdf") == TRUE)){
+        try(.GlobalEnv$driver <- rsDriver(browser=  c("chrome") #paste0(browserpreference)
+                                          ,version = "latest"
+                                          ,chromever= chrome.version4
+                                          # ,geckover = NULL
+                                          # ,iedriver = NULL
+                                          # ,phantomver = NULL
+                                          ,port= free_port()
+                                          ,extraCapabilities=eCaps
+                                          ,verbose = FALSE), silent = TRUE)
+      }
       try(.GlobalEnv$driver <- rsDriver(browser=  c("chrome") #paste0(browserpreference)
                                         ,version = "latest"
-                                        ,chromever= chrome.version2
+                                        ,chromever= chrome.version3
                                         # ,geckover = NULL
                                         # ,iedriver = NULL
                                         # ,phantomver = NULL
@@ -89,7 +102,7 @@ start_selenium <- function(browserpreference = "chrome"){
     if((!exists("statusdf") == TRUE)){
       try(.GlobalEnv$driver <- rsDriver(browser=  c("chrome") #paste0(browserpreference)
                                         ,version = "latest"
-                                        ,chromever= chrome.version
+                                        ,chromever= chrome.version2
                                         # ,geckover = NULL
                                         # ,iedriver = NULL
                                         # ,phantomver = NULL
@@ -102,7 +115,7 @@ start_selenium <- function(browserpreference = "chrome"){
     if((!exists("statusdf") == TRUE)){
       try(.GlobalEnv$driver <- rsDriver(browser=  c("chrome") #paste0(browserpreference)
                                         ,version = "latest"
-                                        ,chromever= chrome.version3
+                                        ,chromever= chrome.version
                                         # ,geckover = NULL
                                         # ,iedriver = NULL
                                         # ,phantomver = NULL
