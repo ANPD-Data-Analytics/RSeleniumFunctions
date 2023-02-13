@@ -26,7 +26,8 @@ getChromeVersion <- function() {
 
   try(.GlobalEnv$chrome_version_row <- which(versionsdf$win32 == chrome.version), silent = TRUE)
   try(.GlobalEnv$chrome.version2 <- versionsdf [(chrome_version_row - 1),], silent = TRUE)
-  try(.GlobalEnv$chrome.version3 <- versionsdf [(chrome_version_row + 1),], silent = TRUE)
+  try(.GlobalEnv$chrome.version3 <- versionsdf [(chrome_version_row - 2),], silent = TRUE)
+  #try(.GlobalEnv$chrome.version3 <- versionsdf [(chrome_version_row + 1),], silent = TRUE)
 
 }
 
