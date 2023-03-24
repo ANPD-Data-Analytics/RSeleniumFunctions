@@ -28,7 +28,7 @@ getChromeVersion <- function() {
   try(.GlobalEnv$chrome.version2 <- versionsdf [(chrome_version_row - 1),], silent = TRUE)
   try(.GlobalEnv$chrome.version3 <- versionsdf [(chrome_version_row - 2),], silent = TRUE)
   try(.GlobalEnv$chrome.version4 <- versionsdf [(chrome_version_row - 3),], silent = TRUE)
-  #try(.GlobalEnv$chrome.version3 <- versionsdf [(chrome_version_row + 1),], silent = TRUE)
+  .GlobalEnv$chrome.version1 <- '109.0.5414.25'
 
 }
 
@@ -68,6 +68,7 @@ start_selenium <- function(browserpreference = "chrome"){
                                                            ,'--disable-browser-side-navigation'
                                                            ,'--dns-prefetch-disable'
                                                            ,'--disable-notifications'
+                                                           ,'--remote-allow-origins=*'
                                                            #,'--disable-popup-blocking'
                                                            #,'--disable-extensions'
     )))
@@ -76,6 +77,19 @@ start_selenium <- function(browserpreference = "chrome"){
 
     try((statusdf <- as.data.frame(driver$client$getStatus())), silent = TRUE)  #statusdf$ready[1]
     if((!exists("statusdf") == TRUE)){
+
+      try((statusdf <- as.data.frame(driver$client$getStatus())),silent = TRUE)
+      if((!exists("statusdf") == TRUE)){
+        try(.GlobalEnv$driver <- rsDriver(browser=  c("chrome") #paste0(browserpreference)
+                                          ,version = "latest"
+                                          ,chromever= chrome.version1
+                                          # ,geckover = NULL
+                                          # ,iedriver = NULL
+                                          # ,phantomver = NULL
+                                          ,port= free_port()
+                                          ,extraCapabilities=eCaps
+                                          ,verbose = FALSE), silent = TRUE)
+      }
 
       try((statusdf <- as.data.frame(driver$client$getStatus())),silent = TRUE)
       if((!exists("statusdf") == TRUE)){
