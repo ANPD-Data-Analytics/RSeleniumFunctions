@@ -2,6 +2,9 @@
 
 # Function receives Chrome Driver Information ####
 getChromeVersion <- function() {
+  require(dplyr)
+
+
   chrome_version <-
     system2(command = "wmic",
             args = 'datafile where name="C:\\\\Program Files (x86)\\\\Google\\\\Chrome\\\\Application\\\\chrome.exe" get Version /value',
@@ -28,7 +31,6 @@ getChromeVersion <- function() {
   try(.GlobalEnv$chrome.version2 <- versionsdf [(chrome_version_row - 1),], silent = TRUE)
   try(.GlobalEnv$chrome.version3 <- versionsdf [(chrome_version_row - 2),], silent = TRUE)
   try(.GlobalEnv$chrome.version4 <- versionsdf [(chrome_version_row - 3),], silent = TRUE)
-  .GlobalEnv$chrome.version1 <- '109.0.5414.25'
 
 }
 
@@ -37,17 +39,17 @@ start_selenium <- function(browserpreference = "chrome"){
 
   suppressMessages({
 
-  options(warn=-1)
+    options(warn=-1)
 
-  require(netstat)
-  require(RSelenium)
-  require(dplyr)
-  require(stringr)
-  require(binman)
-  require(wdman)
-  require(retry)
-  require(XML)
-  require(rJava)
+    require(netstat)
+    require(RSelenium)
+    require(dplyr)
+    require(stringr)
+    require(binman)
+    require(wdman)
+    require(retry)
+    require(XML)
+    require(rJava)
 
     # Create Java Task List Before Starting Selenium
     .GlobalEnv$before.tasklist <-  system2("tasklist", stdout = TRUE )
@@ -68,41 +70,65 @@ start_selenium <- function(browserpreference = "chrome"){
                                                            ,'--disable-browser-side-navigation'
                                                            ,'--dns-prefetch-disable'
                                                            ,'--disable-notifications'
-                                                           ,'--remote-allow-origins=*'
+                                                           #,'--remote-allow-origins=*'
                                                            #,'--disable-popup-blocking'
                                                            #,'--disable-extensions'
     )))
 
     getChromeVersion()
 
+
     try((statusdf <- as.data.frame(driver$client$getStatus())), silent = TRUE)  #statusdf$ready[1]
     if((!exists("statusdf") == TRUE)){
+      message(chrome.version)
+      try(file.remove(paste0("C:/Users/",Sys.getenv("USERNAME"),"/AppData/Local/binman/binman_chromedriver/win32/",chrome.version,"/LICENSE.chromedriver")))
+      try(.GlobalEnv$driver <- rsDriver(browser=  c("chrome") #paste0(browserpreference)
+                                        ,version = "latest"
+                                        ,chromever= chrome.version
+                                        # ,geckover = NULL
+                                        # ,iedriver = NULL
+                                        # ,phantomver = NULL
+                                        ,port= free_port()
+                                        ,extraCapabilities=eCaps
+                                        ,verbose = FALSE), silent = TRUE)
+    }
 
-      try((statusdf <- as.data.frame(driver$client$getStatus())),silent = TRUE)
-      if((!exists("statusdf") == TRUE)){
-        try(.GlobalEnv$driver <- rsDriver(browser=  c("chrome") #paste0(browserpreference)
-                                          ,version = "latest"
-                                          ,chromever= chrome.version1
-                                          # ,geckover = NULL
-                                          # ,iedriver = NULL
-                                          # ,phantomver = NULL
-                                          ,port= free_port()
-                                          ,extraCapabilities=eCaps
-                                          ,verbose = FALSE), silent = TRUE)
-      }
 
-      try((statusdf <- as.data.frame(driver$client$getStatus())),silent = TRUE)
-      if((!exists("statusdf") == TRUE)){
-        try(.GlobalEnv$driver <- rsDriver(browser=  c("chrome") #paste0(browserpreference)
-                                          ,version = "latest"
-                                          ,chromever= chrome.version4
-                                          # ,geckover = NULL
-                                          # ,iedriver = NULL
-                                          # ,phantomver = NULL
-                                          ,port= free_port()
-                                          ,extraCapabilities=eCaps
-                                          ,verbose = FALSE), silent = TRUE)
-      }
+    try((statusdf <- as.data.frame(driver$client$getStatus())),silent = TRUE)
+    if((!exists("statusdf") == TRUE)){
+      message(chrome.version1)
+      try(file.remove(paste0("C:/Users/",Sys.getenv("USERNAME"),"/AppData/Local/binman/binman_chromedriver/win32/",chrome.version1,"/LICENSE.chromedriver")))
+      try(.GlobalEnv$driver <- rsDriver(browser=  c("chrome") #paste0(browserpreference)
+                                        ,version = "latest"
+                                        ,chromever= chrome.version1
+                                        # ,geckover = NULL
+                                        # ,iedriver = NULL
+                                        # ,phantomver = NULL
+                                        ,port= free_port()
+                                        ,extraCapabilities=eCaps
+                                        ,verbose = FALSE), silent = TRUE)
+    }
+
+
+    try((statusdf <- as.data.frame(driver$client$getStatus())),silent = TRUE)
+    if((!exists("statusdf") == TRUE)){
+      message(chrome.version1)
+      try(file.remove(paste0("C:/Users/",Sys.getenv("USERNAME"),"/AppData/Local/binman/binman_chromedriver/win32/",chrome.version2,"/LICENSE.chromedriver")))
+      try(.GlobalEnv$driver <- rsDriver(browser=  c("chrome") #paste0(browserpreference)
+                                        ,version = "latest"
+                                        ,chromever= chrome.version2
+                                        # ,geckover = NULL
+                                        # ,iedriver = NULL
+                                        # ,phantomver = NULL
+                                        ,port= free_port()
+                                        ,extraCapabilities=eCaps
+                                        ,verbose = FALSE), silent = TRUE)
+    }
+
+    try((statusdf <- as.data.frame(driver$client$getStatus())),silent = TRUE)
+    if((!exists("statusdf") == TRUE)){
+      message(chrome.version3)
+      try(file.remove(paste0("C:/Users/",Sys.getenv("USERNAME"),"/AppData/Local/binman/binman_chromedriver/win32/",chrome.version3,"/LICENSE.chromedriver")))
       try(.GlobalEnv$driver <- rsDriver(browser=  c("chrome") #paste0(browserpreference)
                                         ,version = "latest"
                                         ,chromever= chrome.version3
@@ -117,9 +143,11 @@ start_selenium <- function(browserpreference = "chrome"){
 
     try((statusdf <- as.data.frame(driver$client$getStatus())),silent = TRUE)
     if((!exists("statusdf") == TRUE)){
+      message(chrome.version4)
+      try(file.remove(paste0("C:/Users/",Sys.getenv("USERNAME"),"/AppData/Local/binman/binman_chromedriver/win32/",chrome.version4,"/LICENSE.chromedriver")))
       try(.GlobalEnv$driver <- rsDriver(browser=  c("chrome") #paste0(browserpreference)
                                         ,version = "latest"
-                                        ,chromever= chrome.version2
+                                        ,chromever= chrome.version4
                                         # ,geckover = NULL
                                         # ,iedriver = NULL
                                         # ,phantomver = NULL
@@ -128,18 +156,6 @@ start_selenium <- function(browserpreference = "chrome"){
                                         , verbose = FALSE),silent = TRUE)
     }
 
-    try((statusdf <- as.data.frame(driver$client$getStatus())),silent = TRUE)
-    if((!exists("statusdf") == TRUE)){
-      try(.GlobalEnv$driver <- rsDriver(browser=  c("chrome") #paste0(browserpreference)
-                                        ,version = "latest"
-                                        ,chromever= chrome.version
-                                        # ,geckover = NULL
-                                        # ,iedriver = NULL
-                                        # ,phantomver = NULL
-                                        ,port= free_port()
-                                        ,extraCapabilities=eCaps
-                                        ,verbose = FALSE), silent = TRUE)
-    }
 
     Sys.sleep(2)
 
