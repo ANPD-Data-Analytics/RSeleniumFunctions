@@ -2,8 +2,15 @@
 
 # Function receives Chrome Driver Information ####
 getChromeVersion <- function() {
-  require(dplyr)
 
+  # files <- list.files(paste0("C:/Users/", Sys.getenv("USERNAME"),
+  #                            "/AppData/Local/binman/binman_chromedriver/win32/"), pattern = "LICENSE.chromedriver",recursive = TRUE, full.names = TRUE)
+  # to_be_deleted <- grep("LICENSE.chromedriver", files, value = T)
+  # file.remove(to_be_deleted)
+  #
+  # https://googlechromelabs.github.io/chrome-for-testing/#stable
+
+    require(dplyr)
 
   chrome_version <-
     system2(command = "wmic",
@@ -14,9 +21,7 @@ getChromeVersion <- function() {
     magrittr::extract(!is.na(.))
 
   versions = binman::list_versions("chromedriver")
-
   .GlobalEnv$versionsdf <- as.data.frame(versions)
-
   .GlobalEnv$chrome.version <- chrome_version %>%
     magrittr::extract(!is.na(.)) %>%
     stringr::str_replace_all(pattern = "\\.",
@@ -26,6 +31,9 @@ getChromeVersion <- function() {
     as.numeric_version() %>%
     min() %>%
     as.character()
+  if (identical(chrome.version, character(0) == TRUE)) {
+    .GlobalEnv$chrome.version <- as.character(max(as.numeric_version(versionsdf$win32), na.rm = TRUE))
+  }
 
   try(.GlobalEnv$chrome_version_row <- which(versionsdf$win32 == chrome.version), silent = TRUE)
   try(.GlobalEnv$chrome.version2 <- versionsdf [(chrome_version_row - 1),], silent = TRUE)
@@ -81,13 +89,10 @@ start_selenium <- function(browserpreference = "chrome"){
     try((statusdf <- as.data.frame(driver$client$getStatus())), silent = TRUE)  #statusdf$ready[1]
     if((!exists("statusdf") == TRUE)){
       message(chrome.version)
-      try(file.remove(paste0("C:/Users/",Sys.getenv("USERNAME"),"/AppData/Local/binman/binman_chromedriver/win32/",chrome.version,"/LICENSE.chromedriver")))
-      try(.GlobalEnv$driver <- rsDriver(browser=  c("chrome") #paste0(browserpreference)
+
+      try(.GlobalEnv$driver <- rsDriver(browser=  c("chrome")
                                         ,version = "latest"
                                         ,chromever= chrome.version
-                                        # ,geckover = NULL
-                                        # ,iedriver = NULL
-                                        # ,phantomver = NULL
                                         ,port= free_port()
                                         ,extraCapabilities=eCaps
                                         ,verbose = FALSE), silent = TRUE)
@@ -96,30 +101,22 @@ start_selenium <- function(browserpreference = "chrome"){
 
     try((statusdf <- as.data.frame(driver$client$getStatus())),silent = TRUE)
     if((!exists("statusdf") == TRUE)){
-      message(chrome.version1)
-      try(file.remove(paste0("C:/Users/",Sys.getenv("USERNAME"),"/AppData/Local/binman/binman_chromedriver/win32/",chrome.version1,"/LICENSE.chromedriver")))
-      try(.GlobalEnv$driver <- rsDriver(browser=  c("chrome") #paste0(browserpreference)
-                                        ,version = "latest"
-                                        ,chromever= chrome.version1
-                                        # ,geckover = NULL
-                                        # ,iedriver = NULL
-                                        # ,phantomver = NULL
-                                        ,port= free_port()
-                                        ,extraCapabilities=eCaps
-                                        ,verbose = FALSE), silent = TRUE)
-    }
-
-
-    try((statusdf <- as.data.frame(driver$client$getStatus())),silent = TRUE)
-    if((!exists("statusdf") == TRUE)){
-      message(chrome.version1)
-      try(file.remove(paste0("C:/Users/",Sys.getenv("USERNAME"),"/AppData/Local/binman/binman_chromedriver/win32/",chrome.version2,"/LICENSE.chromedriver")))
-      try(.GlobalEnv$driver <- rsDriver(browser=  c("chrome") #paste0(browserpreference)
+      try(message(chrome.version2))
+      try(.GlobalEnv$driver <- rsDriver(browser=  c("chrome")
                                         ,version = "latest"
                                         ,chromever= chrome.version2
-                                        # ,geckover = NULL
-                                        # ,iedriver = NULL
-                                        # ,phantomver = NULL
+                                        ,port= free_port()
+                                        ,extraCapabilities=eCaps
+                                        ,verbose = FALSE), silent = TRUE)
+    }
+
+
+    try((statusdf <- as.data.frame(driver$client$getStatus())),silent = TRUE)
+    if((!exists("statusdf") == TRUE)){
+      try(message(chrome.version3))
+      try(.GlobalEnv$driver <- rsDriver(browser=  c("chrome")
+                                        ,version = "latest"
+                                        ,chromever= chrome.version3
                                         ,port= free_port()
                                         ,extraCapabilities=eCaps
                                         ,verbose = FALSE), silent = TRUE)
@@ -127,11 +124,11 @@ start_selenium <- function(browserpreference = "chrome"){
 
     try((statusdf <- as.data.frame(driver$client$getStatus())),silent = TRUE)
     if((!exists("statusdf") == TRUE)){
-      message(chrome.version3)
+      try(message(chrome.version4))
       try(file.remove(paste0("C:/Users/",Sys.getenv("USERNAME"),"/AppData/Local/binman/binman_chromedriver/win32/",chrome.version3,"/LICENSE.chromedriver")))
       try(.GlobalEnv$driver <- rsDriver(browser=  c("chrome") #paste0(browserpreference)
                                         ,version = "latest"
-                                        ,chromever= chrome.version3
+                                        ,chromever= chrome.version4
                                         # ,geckover = NULL
                                         # ,iedriver = NULL
                                         # ,phantomver = NULL
@@ -143,17 +140,7 @@ start_selenium <- function(browserpreference = "chrome"){
 
     try((statusdf <- as.data.frame(driver$client$getStatus())),silent = TRUE)
     if((!exists("statusdf") == TRUE)){
-      message(chrome.version4)
-      try(file.remove(paste0("C:/Users/",Sys.getenv("USERNAME"),"/AppData/Local/binman/binman_chromedriver/win32/",chrome.version4,"/LICENSE.chromedriver")))
-      try(.GlobalEnv$driver <- rsDriver(browser=  c("chrome") #paste0(browserpreference)
-                                        ,version = "latest"
-                                        ,chromever= chrome.version4
-                                        # ,geckover = NULL
-                                        # ,iedriver = NULL
-                                        # ,phantomver = NULL
-                                        ,port= free_port()
-                                        ,extraCapabilities=eCaps
-                                        , verbose = FALSE),silent = TRUE)
+      message("selenium start-up failed")
     }
 
 
