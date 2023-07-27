@@ -31,7 +31,7 @@ getChromeVersion <- function() {
     as.numeric_version() %>%
     min() %>%
     as.character()
-  if (identical(chrome.version, character(0) == TRUE)) {
+  if (identical(chrome.version, character(0)) == TRUE) {
     .GlobalEnv$chrome.version <- as.character(max(as.numeric_version(versionsdf$win32), na.rm = TRUE))
   }
 
